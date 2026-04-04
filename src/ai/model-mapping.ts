@@ -18,7 +18,9 @@ export type GenerationMode =
   | "text-to-video"
   | "image-to-video"
   | "reference-to-video"
-  | "frames-to-video";
+  | "frames-to-video"
+  | "text-to-image"
+  | "image-to-image";
 
 export interface ProviderModelConfig {
   /** Provider-specific model ID */
@@ -479,6 +481,34 @@ export const MODEL_MAPPINGS: Record<string, ModelMapping> = {
       },
     },
   },
+
+  // -------------------------------------------------------------------------
+  // Wan 2.7 Image (text-to-image)
+  // -------------------------------------------------------------------------
+  "wan2.7-image": {
+    internalId: "wan2.7-image",
+    displayName: "Wan 2.7",
+    providers: {
+      evolink: {
+        providerModelId: "wan2.7-image",
+        supported: true,
+        transformParams: (
+          internalModelId: string,
+          params: Record<string, any>
+        ): Record<string, any> => {
+          const result: Record<string, any> = {
+            prompt: params.prompt,
+            aspect_ratio: params.aspectRatio || "1:1",
+            callback_url: params.callbackUrl,
+          };
+          if (params.imageUrl) {
+            result.image_url = params.imageUrl;
+          }
+          return result;
+        },
+      },
+    },
+  },
 };
 
 const MODEL_MODE_SUPPORT: Record<
@@ -512,6 +542,9 @@ const MODEL_MODE_SUPPORT: Record<
   },
   "seedance-1.0-pro-quality": {
     apimart: ["text-to-video", "image-to-video"],
+  },
+  "wan2.7-image": {
+    evolink: ["text-to-image", "image-to-image"],
   },
 };
 
@@ -591,6 +624,12 @@ export function normalizeGenerationMode(
       return "image-to-video";
     case "r2v":
       return "reference-to-video";
+    case "text-to-image":
+    case "t2i":
+      return "text-to-image";
+    case "image-to-image":
+    case "i2i":
+      return "image-to-image";
     default:
       return hasImageInput ? "image-to-video" : "text-to-video";
   }
