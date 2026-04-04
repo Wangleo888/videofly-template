@@ -51,6 +51,11 @@ export const videoStatusEnum = pgEnum("VideoStatus", [
   "FAILED",
 ]);
 
+export const generationTypeEnum = pgEnum("generation_type", [
+  "video",
+  "image",
+]);
+
 export const customers = pgTable(
   "Customer",
   {
@@ -322,6 +327,7 @@ export const videos = pgTable(
     completedAt: timestamp("completed_at"),
     generationTime: integer("generation_time"),
     isDeleted: boolean("is_deleted").default(false).notNull(),
+    type: generationTypeEnum("type").default("video").notNull(),
   },
   (table) => ({
     userIdx: index("videos_user_id_idx").on(table.userId),
