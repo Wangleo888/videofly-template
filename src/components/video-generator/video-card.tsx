@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Play, Download, Trash2, Sparkles, Clock, Zap } from "lucide-react";
+import { Play, Download, Trash2, Sparkles, Clock, Zap, ImageIcon } from "lucide-react";
 import { cn } from "@/components/ui";
 import { Card, CardContent } from "@/components/ui/card";
 import { BlurFade } from "@/components/magicui/blur-fade";
@@ -11,6 +11,7 @@ interface Video {
   prompt: string;
   model: string;
   status: string;
+  type?: "video" | "image";
   video_url?: string | null;
   thumbnail_url?: string | null;
   created_at: string | Date;
@@ -58,9 +59,11 @@ function VideoThumbnail({ video }: { video: Video }) {
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [showOverlay, setShowOverlay] = React.useState(false);
 
+  const isImage = (video.type || "video") === "image";
+
   const handleMouseEnter = () => {
     setShowOverlay(true);
-    if (videoRef.current && video.status === "COMPLETED" && video.video_url) {
+    if (!isImage && videoRef.current && video.status === "COMPLETED" && video.video_url) {
       videoRef.current.play().catch(() => {});
       setIsPlaying(true);
     }
@@ -86,14 +89,22 @@ function VideoThumbnail({ video }: { video: Video }) {
     >
       {/* Video or Image Preview */}
       {video.status === "COMPLETED" && video.video_url ? (
-        <video
-          ref={videoRef}
-          src={video.video_url}
-          className="w-full h-full object-cover"
-          muted
-          loop
-          playsInline
-        />
+        isImage ? (
+          <img
+            src={video.video_url}
+            alt={video.prompt}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <video
+            ref={videoRef}
+            src={video.video_url}
+            className="w-full h-full object-cover"
+            muted
+            loop
+            playsInline
+          />
+        )
       ) : video.thumbnail_url ? (
         <img
           src={video.thumbnail_url}
@@ -135,14 +146,19 @@ function VideoThumbnail({ video }: { video: Video }) {
       )}
 
       {/* Video Info Overlay */}
-      {(video.duration || video.resolution) && video.status === "COMPLETED" && (
+      {video.status === "COMPLETED" && (
         <div className="absolute bottom-3 left-3 flex items-center gap-2">
-          {video.duration && (
+          {isImage ? (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-black/60 backdrop-blur-sm text-xs text-white">
+              <ImageIcon className="w-3 h-3" />
+              Image
+            </span>
+          ) : video.duration ? (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-black/60 backdrop-blur-sm text-xs text-white">
               <Clock className="w-3 h-3" />
               {video.duration}
             </span>
-          )}
+          ) : null}
           {video.resolution && (
             <span className="inline-flex items-center px-2 py-0.5 rounded bg-black/60 backdrop-blur-sm text-xs text-white">
               {video.resolution}
@@ -151,8 +167,8 @@ function VideoThumbnail({ video }: { video: Video }) {
         </div>
       )}
 
-      {/* Play Button Overlay */}
-      {video.status === "COMPLETED" && video.video_url && (
+      {/* Play Button Overlay (only for videos) */}
+      {video.status === "COMPLETED" && video.video_url && !isImage && (
         <div
           className={cn(
             "absolute inset-0 flex items-center justify-center transition-opacity duration-300",
@@ -171,30 +187,36 @@ function VideoThumbnail({ video }: { video: Video }) {
 function VideoActions({ video, onDelete }: { video: Video; onDelete?: () => void }) {
   if (video.status !== "COMPLETED" || !video.video_url) return null;
 
+  const isImage = (video.type || "video") === "image";
+
   return (
     <div className="flex items-center gap-2">
-      <a
-        href={video.video_url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={cn(
-          "flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all",
-          "bg-zinc-800 hover:bg-zinc-700 text-white"
-        )}
-      >
-        <Play className="w-4 h-4" />
-        Play
-      </a>
+      {!isImage && (
+        <a
+          href={video.video_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn(
+            "flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all",
+            "bg-zinc-800 hover:bg-zinc-700 text-white"
+          )}
+        >
+          <Play className="w-4 h-4" />
+          Play
+        </a>
+      )}
       <a
         href={video.video_url}
         download
         className={cn(
-          "flex items-center justify-center w-10 h-10 rounded-xl transition-all",
+          isImage ? "flex-1" : "",
+          "flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all",
           "bg-zinc-800 hover:bg-zinc-700 text-white"
         )}
         title="Download"
       >
         <Download className="w-4 h-4" />
+        {isImage ? "Download" : ""}
       </a>
       {onDelete && (
         <button

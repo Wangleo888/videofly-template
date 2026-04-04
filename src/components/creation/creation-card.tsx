@@ -6,7 +6,7 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
-import { Play, Clock, AlertCircle, MoreHorizontal, Download, Trash2 } from "lucide-react";
+import { Play, Clock, AlertCircle, MoreHorizontal, Download, Trash2, Image } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { cn } from "@/components/ui";
@@ -92,6 +92,7 @@ export function CreationCard({
     normalizedStatus === "uploading";
   const isFailed = normalizedStatus === "failed";
   const isCompleted = normalizedStatus === "completed";
+  const isImage = (video.type || "video") === "image";
 
   const handleDelete = async () => {
     setShowDeleteDialog(false);
@@ -102,7 +103,7 @@ export function CreationCard({
     if (video.videoUrl) {
       const link = document.createElement("a");
       link.href = video.videoUrl;
-      link.download = `videofly-${video.uuid}.mp4`;
+      link.download = `videofly-${video.uuid}${isImage ? ".png" : ".mp4"}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -111,7 +112,7 @@ export function CreationCard({
   };
 
   const handlePreviewStart = () => {
-    if (!isCompleted || !video.videoUrl) return;
+    if (!isCompleted || !video.videoUrl || isImage) return;
     const element = videoRef.current;
     if (!element) return;
     element.currentTime = 0;
@@ -119,6 +120,7 @@ export function CreationCard({
   };
 
   const handlePreviewStop = () => {
+    if (isImage) return;
     const element = videoRef.current;
     if (!element) return;
     element.pause();
@@ -139,16 +141,24 @@ export function CreationCard({
         {/* Thumbnail / Preview */}
         <div className="aspect-[4/3] w-full overflow-hidden bg-muted relative">
           {isCompleted && video.videoUrl ? (
-            <video
-              ref={videoRef}
-              src={video.videoUrl}
-              poster={video.thumbnailUrl || undefined}
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              className="h-full w-full object-contain"
-            />
+            isImage ? (
+              <img
+                src={video.videoUrl}
+                alt={video.prompt}
+                className="h-full w-full object-contain"
+              />
+            ) : (
+              <video
+                ref={videoRef}
+                src={video.videoUrl}
+                poster={video.thumbnailUrl || undefined}
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                className="h-full w-full object-contain"
+              />
+            )
           ) : video.thumbnailUrl ? (
             <img
               src={video.thumbnailUrl}
@@ -173,8 +183,8 @@ export function CreationCard({
             </div>
           )}
 
-          {/* Overlay for completed videos */}
-          {isCompleted && (
+          {/* Overlay for completed videos (not for images) */}
+          {isCompleted && !isImage && (
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
               <div className="h-12 w-12 rounded-full bg-primary/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <Play className="h-5 w-5 text-primary-foreground fill-primary-foreground" />
@@ -189,12 +199,19 @@ export function CreationCard({
             </Badge>
           </div>
 
-          {/* Duration badge (completed only) */}
-          {isCompleted && video.duration > 0 && (
+          {/* Type badge for images / Duration badge for videos */}
+          {isCompleted && (
             <div className="absolute bottom-2 right-2">
-              <Badge variant="secondary" className="bg-black/70 text-white border-0">
-                {Math.floor(video.duration)}s
-              </Badge>
+              {isImage ? (
+                <Badge variant="secondary" className="bg-black/70 text-white border-0 flex items-center gap-1">
+                  <Image className="h-3 w-3" />
+                  Image
+                </Badge>
+              ) : video.duration > 0 ? (
+                <Badge variant="secondary" className="bg-black/70 text-white border-0">
+                  {Math.floor(video.duration)}s
+                </Badge>
+              ) : null}
             </div>
           )}
 

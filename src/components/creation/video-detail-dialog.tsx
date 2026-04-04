@@ -5,7 +5,7 @@
 // ============================================
 
 import { useEffect, useRef, useState } from "react";
-import { X, Download, Trash2 } from "lucide-react";
+import { X, Download, Trash2, Image } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { cn } from "@/components/ui";
@@ -48,9 +48,9 @@ export function VideoDetailDialog({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Auto-play video when dialog opens
+  // Auto-play video when dialog opens (only for videos, not images)
   useEffect(() => {
-    if (open && video?.videoUrl && videoRef.current) {
+    if (open && video?.videoUrl && videoRef.current && (video.type || "video") !== "image") {
       videoRef.current.play().catch(() => {
         // Auto-play might be blocked by browser
         console.log("Auto-play blocked, user interaction required");
@@ -67,6 +67,8 @@ export function VideoDetailDialog({
 
   if (!video) return null;
 
+  const isImage = (video.type || "video") === "image";
+
   const handleDelete = async () => {
     await onDelete?.(video.uuid);
     setShowDeleteDialog(false);
@@ -77,7 +79,7 @@ export function VideoDetailDialog({
     if (video.videoUrl) {
       const link = document.createElement("a");
       link.href = video.videoUrl;
-      link.download = `videofly-${video.uuid}.mp4`;
+      link.download = `videofly-${video.uuid}${isImage ? ".png" : ".mp4"}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -111,16 +113,24 @@ export function VideoDetailDialog({
           </button>
 
           <div className="flex flex-col lg:flex-row h-full">
-            {/* Left: Video Player (~65% for better 16:9 display) */}
+            {/* Left: Video/Image Player (~65% for better 16:9 display) */}
             <div className="lg:w-[65%] h-[60vh] lg:h-full bg-black flex items-center justify-center">
               {video.videoUrl ? (
-                <video
-                  ref={videoRef}
-                  src={video.videoUrl}
-                  controls
-                  className="w-full h-full"
-                  playsInline
-                />
+                isImage ? (
+                  <img
+                    src={video.videoUrl}
+                    alt={video.prompt}
+                    className="max-w-full max-h-full object-contain"
+                  />
+                ) : (
+                  <video
+                    ref={videoRef}
+                    src={video.videoUrl}
+                    controls
+                    className="w-full h-full"
+                    playsInline
+                  />
+                )
               ) : video.thumbnailUrl ? (
                 <img
                   src={video.thumbnailUrl}
@@ -128,7 +138,7 @@ export function VideoDetailDialog({
                   className="w-full h-full object-contain"
                 />
               ) : (
-                <div className="text-muted-foreground">No video available</div>
+                <div className="text-muted-foreground">{isImage ? "No image available" : "No video available"}</div>
               )}
             </div>
 
@@ -159,8 +169,11 @@ export function VideoDetailDialog({
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <div className="text-sm text-muted-foreground">{t("detail.duration")}</div>
-                    <div className="font-medium">{video.duration}s</div>
+                    <div className="text-sm text-muted-foreground">{isImage ? t("detail.type") : t("detail.duration")}</div>
+                    <div className="font-medium flex items-center gap-1">
+                      {isImage && <Image className="h-4 w-4" />}
+                      {isImage ? t("detail.image") : `${video.duration}s`}
+                    </div>
                   </div>
                   <div className="space-y-1">
                     <div className="text-sm text-muted-foreground">{t("detail.aspectRatio")}</div>

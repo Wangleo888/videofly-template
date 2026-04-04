@@ -3,6 +3,7 @@
 // ============================================
 
 export type VideoStatus = "pending" | "generating" | "uploading" | "completed" | "failed";
+export type GenerationType = "video" | "image";
 
 export interface Video {
   uuid: string;
@@ -11,6 +12,7 @@ export interface Video {
   model: string;
   provider: string;
   status: VideoStatus;
+  type: GenerationType;
   videoUrl: string | null;
   thumbnailUrl: string | null;
   duration: number;
@@ -29,6 +31,7 @@ export interface Video {
 export interface VideoFilterOptions {
   status?: VideoStatus | "all";
   model?: string | "all";
+  type?: GenerationType | "all";
   sortBy?: "newest" | "oldest";
 }
 
@@ -36,6 +39,7 @@ export interface ListVideosParams {
   limit?: number;
   cursor?: string;
   status?: VideoStatus;
+  type?: GenerationType;
 }
 
 // ============================================

@@ -554,6 +554,7 @@ export class VideoService {
       limit?: number;
       cursor?: string;
       status?: string;
+      type?: string;
     }
   ) {
     const limit = options?.limit || 20;
@@ -565,6 +566,10 @@ export class VideoService {
 
     if (options?.status) {
       conditions.push(eq(videos.status, options.status as typeof VideoStatus[keyof typeof VideoStatus]));
+    }
+
+    if (options?.type) {
+      conditions.push(eq(videos.type, options.type as "video" | "image"));
     }
 
     if (options?.cursor) {

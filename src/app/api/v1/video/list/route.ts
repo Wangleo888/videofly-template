@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
       limit: Number.parseInt(searchParams.get("limit") || "20"),
       cursor: searchParams.get("cursor") || undefined,
       status: searchParams.get("status") || undefined,
+      type: searchParams.get("type") || undefined,
     });
 
     return apiSuccess(result);

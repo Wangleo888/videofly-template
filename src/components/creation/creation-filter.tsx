@@ -12,7 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { VideoFilterOptions, VideoStatus } from "@/lib/types/dashboard";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { VideoFilterOptions, VideoStatus, GenerationType } from "@/lib/types/dashboard";
 
 interface CreationFilterProps {
   filter: VideoFilterOptions;
@@ -44,6 +45,18 @@ export function CreationFilter({ filter, onFilterChange }: CreationFilterProps) 
 
   return (
     <div className="flex flex-wrap items-center gap-3">
+      {/* Type Filter Tabs */}
+      <Tabs
+        value={filter.type || "all"}
+        onValueChange={(value) => onFilterChange({ type: value as GenerationType | "all" })}
+      >
+        <TabsList className="h-9">
+          <TabsTrigger value="all" className="text-xs px-3">{t("all")}</TabsTrigger>
+          <TabsTrigger value="video" className="text-xs px-3">{t("videos")}</TabsTrigger>
+          <TabsTrigger value="image" className="text-xs px-3">{t("images")}</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
       {/* Status Filter */}
       <Select
         value={filter.status || "all"}

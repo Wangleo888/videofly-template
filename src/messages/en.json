@@ -456,6 +456,8 @@
         "generating": "Generating",
         "failed": "Failed",
         "allModels": "All Models",
+        "videos": "Videos",
+        "images": "Images",
         "newest": "Newest",
         "oldest": "Oldest"
       },
@@ -493,6 +495,8 @@
       "detail": {
         "model": "Model",
         "duration": "Duration",
+        "type": "Type",
+        "image": "Image",
         "aspectRatio": "Aspect Ratio",
         "prompt": "Prompt",
         "createdAt": "Created",

@@ -456,6 +456,8 @@
         "generating": "生成中",
         "failed": "失败",
         "allModels": "全部模型",
+        "videos": "视频",
+        "images": "图片",
         "newest": "最新",
         "oldest": "最旧"
       },
@@ -493,6 +495,8 @@
       "detail": {
         "model": "模型",
         "duration": "时长",
+        "type": "类型",
+        "image": "图片",
         "aspectRatio": "宽高比",
         "prompt": "提示词",
         "createdAt": "创建时间",
