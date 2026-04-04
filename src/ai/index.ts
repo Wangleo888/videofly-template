@@ -1,5 +1,10 @@
-import type { AIVideoProvider, ProviderType } from "./types";
+import type {
+  AIVideoProvider,
+  AIImageProvider,
+  ProviderType,
+} from "./types";
 import { EvolinkProvider } from "./providers/evolink";
+import { EvolinkImageProvider } from "./providers/evolink-image";
 import { KieProvider } from "./providers/kie";
 import { ApimartProvider } from "./providers/apimart";
 import {
@@ -34,6 +39,15 @@ export function getProvider(type: ProviderType): AIVideoProvider {
 export function getDefaultProvider(): AIVideoProvider {
   const type = getConfiguredAIProvider() || "evolink";
   return getProvider(type);
+}
+
+export function getImageProvider(provider: ProviderType): AIImageProvider {
+  switch (provider) {
+    case "evolink":
+      return new EvolinkImageProvider(requireProviderApiKey("evolink"));
+    default:
+      throw new Error(`Unsupported image provider: ${provider}`);
+  }
 }
 
 export * from "./types";
