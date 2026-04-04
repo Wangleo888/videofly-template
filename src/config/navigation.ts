@@ -44,14 +44,18 @@ export const sidebarNavigation: NavGroup[] = [
       },
     ],
   },
-  // 未来 IMAGE 分组扩展示例
-  // {
-  //   id: "image",
-  //   title: "IMAGE",
-  //   items: [
-  //     { id: "txt2img", title: "Text to Image", href: "/text-to-image", icon: "Image" },
-  //   ],
-  // },
+  {
+    id: "image",
+    title: "IMAGE",
+    items: [
+      {
+        id: "txt2img",
+        title: "Text to Image",
+        href: "/text-to-image",
+        icon: "Image",
+      },
+    ],
+  },
   {
     id: "user",
     items: [
@@ -116,6 +120,12 @@ export const headerTools = [
     title: "Reference to Video",
     href: "/reference-to-video",
     icon: "Video",
+  },
+  {
+    id: "txt2img",
+    title: "Text to Image",
+    href: "/text-to-image",
+    icon: "Image",
   },
 ];
 
