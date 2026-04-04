@@ -44,3 +44,38 @@ export interface AIVideoProvider {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   parseCallback(payload: any): VideoTaskResponse;
 }
+
+// ============================================================================
+// Image Generation Types
+// ============================================================================
+
+export interface ImageGenerationParams {
+  model?: string;
+  prompt: string;
+  aspectRatio?: string;
+  imageUrl?: string;        // Optional reference image for image-to-image
+  callbackUrl?: string;
+  outputNumber?: number;
+}
+
+export interface ImageTaskResponse {
+  taskId: string;
+  provider: ProviderType;
+  status: "pending" | "processing" | "completed" | "failed";
+  progress?: number;
+  imageUrl?: string;
+  error?: {
+    code: string;
+    message: string;
+  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  raw?: any;
+}
+
+export interface AIImageProvider {
+  name: string;
+  createImageTask(params: ImageGenerationParams): Promise<ImageTaskResponse>;
+  getImageTaskStatus(taskId: string): Promise<ImageTaskResponse>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  parseCallback(payload: any): ImageTaskResponse;
+}
