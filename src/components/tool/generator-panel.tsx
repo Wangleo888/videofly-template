@@ -45,7 +45,7 @@ function SectionLabel({ children, required, className }: SectionLabelProps) {
 }
 
 interface GeneratorPanelProps {
-  toolType: "image-to-video" | "text-to-video" | "reference-to-video";
+  toolType: "image-to-video" | "text-to-video" | "reference-to-video" | "text-to-image";
   isLoading?: boolean;
   onSubmit?: (data: GeneratorData) => void;
   availableModelIds?: string[];
@@ -216,7 +216,7 @@ export function GeneratorPanel({
   const handleSubmit = useCallback(() => {
     if (!currentModel) return;
     const hasPrompt = prompt.trim().length > 0;
-    const requiresImage = toolType !== "text-to-video";
+    const requiresImage = toolType !== "text-to-video" && toolType !== "text-to-image";
     const hasImage = Boolean(imageFile || imageUrl);
     if (!hasPrompt || isLoading) return;
     if (requiresImage && !hasImage) return;
@@ -266,7 +266,7 @@ export function GeneratorPanel({
   const canSubmit = hasAvailableModels &&
     Boolean(currentModel) &&
     prompt.trim().length > 0 &&
-    (!((toolType !== "text-to-video") && !imageFile && !imageUrl)) &&
+    !((toolType !== "text-to-video" && toolType !== "text-to-image") && !imageFile && !imageUrl) &&
     !isLoading;
 
 
@@ -275,6 +275,7 @@ export function GeneratorPanel({
     if (toolType === "image-to-video") return "IMAGE TO VIDEO";
     if (toolType === "text-to-video") return "TEXT TO VIDEO";
     if (toolType === "reference-to-video") return "REFERENCE TO VIDEO";
+    if (toolType === "text-to-image") return "TEXT TO IMAGE";
     return "AI GENERATOR";
   };
 
@@ -368,7 +369,7 @@ export function GeneratorPanel({
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Describe the video you want to create, e.g., A cat playing in a sunny garden with natural lighting and fresh atmosphere..."
+              placeholder={toolType === "text-to-image" ? "Describe the image you want to create, e.g., A serene Japanese garden in autumn with golden maple leaves..." : "Describe the video you want to create, e.g., A cat playing in a sunny garden with natural lighting and fresh atmosphere..."}
               disabled={isLoading}
               className="w-full min-h-[100px] max-h-[200px] px-4 py-3 rounded-lg bg-muted/40 border border-border text-foreground placeholder:text-muted-foreground/70 resize-none focus:outline-none focus:border-primary transition-colors text-sm leading-relaxed"
               rows={4}
@@ -550,7 +551,7 @@ export function GeneratorPanel({
             ) : (
               <>
                 <Sparkles className="w-4 h-4" />
-                Generate Video
+                {toolType === "text-to-image" ? "Generate Image" : "Generate Video"}
               </>
             )}
           </button>

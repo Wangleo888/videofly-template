@@ -302,7 +302,8 @@ export function ToolPageLayout({
     localTasks.forEach((task) => {
       addGeneratingId(task.videoId);
       if (!isPolling(task.videoId)) {
-        startPolling(task.videoId);
+        const pollingType = task.mode === "text-to-image" ? "image" as const : "video" as const;
+        startPolling(task.videoId, pollingType);
       }
     });
   }, [user?.id, isPolling, startPolling, addGeneratingId]);
@@ -335,7 +336,8 @@ export function ToolPageLayout({
     if (!isTerminalStatus) {
       addGeneratingId(videoIdFromQuery);
       if (!isPolling(videoIdFromQuery)) {
-        startPolling(videoIdFromQuery);
+        const pollingType = toolRoute === "text-to-image" ? "image" as const : "video" as const;
+        startPolling(videoIdFromQuery, pollingType);
       }
     } else {
       removeGeneratingId(videoIdFromQuery);
@@ -437,68 +439,126 @@ export function ToolPageLayout({
       console.warn("Notification permission request failed:", error);
     }
 
+    const isImageGeneration = toolRoute === "text-to-image";
+
     try {
-      const selectedMode = config.generator.mode || toolRoute;
-      const imageUrl = data.imageFile
-        ? await uploadImage(data.imageFile)
-        : data.imageUrl;
-      const imageUrls = imageUrl ? [imageUrl] : undefined;
-      const response = await fetch("/api/v1/video/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: data.prompt,
-          model: data.model,
-          mode: selectedMode,
-          duration: data.duration,
-          aspectRatio: data.aspectRatio,
-          quality: data.quality,
-          outputNumber: data.outputNumber ?? 1,
-          generateAudio: data.generateAudio,
-          imageUrls,
-          imageUrl,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error?.error?.message || error?.message || "Failed to generate video");
-      }
-
-      const result = await response.json();
-      const videoUuid = result.data.videoUuid as string;
-
-      toast.success("Generation started");
-
-      // 添加到历史记录
-      videoHistoryStorage.addHistory({
-        uuid: videoUuid,
-        userId: user.id,
-        prompt: data.prompt,
-        model: data.model,
-        status: "generating",
-        creditsUsed: data.estimatedCredits,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      });
-      setHistoryItems(videoHistoryStorage.getHistory(user.id));
-
-      setActiveTab("result");
-      addGeneratingId(videoUuid);
-      startPolling(videoUuid);
-
-      if (user?.id) {
-        videoTaskStorage.addTask({
-          userId: user.id,
-          videoId: videoUuid,
-          taskId: result.data.taskId,
-          prompt: data.prompt,
-          model: data.model,
-          mode: selectedMode,
-          status: "generating",
-          createdAt: Date.now(),
-          notified: false,
+      if (isImageGeneration) {
+        // Image generation flow
+        const response = await fetch("/api/v1/image/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prompt: data.prompt,
+            model: data.model,
+            aspectRatio: data.aspectRatio,
+            outputNumber: data.outputNumber ?? 1,
+          }),
         });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error?.error?.message || error?.message || "Failed to generate image");
+        }
+
+        const result = await response.json();
+        const imageUuid = result.data.imageUuid as string;
+
+        toast.success("Image generation started");
+
+        // 添加到历史记录
+        videoHistoryStorage.addHistory({
+          uuid: imageUuid,
+          userId: user.id,
+          prompt: data.prompt,
+          model: data.model,
+          status: "generating",
+          creditsUsed: data.estimatedCredits,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+        setHistoryItems(videoHistoryStorage.getHistory(user.id));
+
+        setActiveTab("result");
+        addGeneratingId(imageUuid);
+        startPolling(imageUuid, "image");
+
+        if (user?.id) {
+          videoTaskStorage.addTask({
+            userId: user.id,
+            videoId: imageUuid,
+            taskId: result.data.taskId,
+            prompt: data.prompt,
+            model: data.model,
+            mode: "text-to-image",
+            status: "generating",
+            createdAt: Date.now(),
+            notified: false,
+          });
+        }
+      } else {
+        // Video generation flow
+        const selectedMode = config.generator.mode || toolRoute;
+        const imageUrl = data.imageFile
+          ? await uploadImage(data.imageFile)
+          : data.imageUrl;
+        const imageUrls = imageUrl ? [imageUrl] : undefined;
+        const response = await fetch("/api/v1/video/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prompt: data.prompt,
+            model: data.model,
+            mode: selectedMode,
+            duration: data.duration,
+            aspectRatio: data.aspectRatio,
+            quality: data.quality,
+            outputNumber: data.outputNumber ?? 1,
+            generateAudio: data.generateAudio,
+            imageUrls,
+            imageUrl,
+          }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error?.error?.message || error?.message || "Failed to generate video");
+        }
+
+        const result = await response.json();
+        const videoUuid = result.data.videoUuid as string;
+
+        toast.success("Generation started");
+
+        // 添加到历史记录
+        videoHistoryStorage.addHistory({
+          uuid: videoUuid,
+          userId: user.id,
+          prompt: data.prompt,
+          model: data.model,
+          status: "generating",
+          creditsUsed: data.estimatedCredits,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+        setHistoryItems(videoHistoryStorage.getHistory(user.id));
+
+        setActiveTab("result");
+        addGeneratingId(videoUuid);
+        startPolling(videoUuid);
+
+        if (user?.id) {
+          videoTaskStorage.addTask({
+            userId: user.id,
+            videoId: videoUuid,
+            taskId: result.data.taskId,
+            prompt: data.prompt,
+            model: data.model,
+            mode: selectedMode,
+            status: "generating",
+            createdAt: Date.now(),
+            notified: false,
+          });
+        }
       }
     } catch (error) {
       console.error("Generation error:", error);
@@ -621,7 +681,7 @@ export function ToolPageLayout({
                 {/* Generator Panel Side */}
                 <div className={`${activeTab === "generator" ? "block" : "hidden"} lg:block w-full lg:w-[380px] shrink-0`}>
                   <GeneratorPanel
-                    toolType={toolRoute as "image-to-video" | "text-to-video" | "reference-to-video"}
+                    toolType={toolRoute as "image-to-video" | "text-to-video" | "reference-to-video" | "text-to-image"}
                     isLoading={isSubmitting}
                     onSubmit={handleSubmit}
                     availableModelIds={config.generator.models.available}

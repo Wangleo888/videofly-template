@@ -1,6 +1,8 @@
 import { useRef, useCallback, useEffect } from "react";
 import type { Video } from "@/db";
 
+export type PollingType = "video" | "image";
+
 interface UseVideoPollingOptions {
   pollInterval?: number;
   maxConsecutiveErrors?: number;
@@ -21,14 +23,15 @@ export function useVideoPolling(options: UseVideoPollingOptions = {}) {
   const pollingTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(
     new Map()
   );
-  const pollingState = useRef<Map<string, { consecutiveErrors: number; nextDelay: number }>>(
+  const pollingState = useRef<Map<string, { consecutiveErrors: number; nextDelay: number; type?: PollingType }>>(
     new Map()
   );
 
-  const fetchVideoDetail = useCallback(async (videoId: string) => {
-    const detailResponse = await fetch(`/api/v1/video/${videoId}`);
+  const fetchDetail = useCallback(async (itemId: string, type: PollingType = "video") => {
+    const endpoint = type === "image" ? `/api/v1/image/${itemId}` : `/api/v1/video/${itemId}`;
+    const detailResponse = await fetch(endpoint);
     if (!detailResponse.ok) {
-      throw new Error("Failed to fetch video detail");
+      throw new Error(`Failed to fetch ${type} detail`);
     }
     const detailResult = await detailResponse.json();
     return detailResult.data as Video;
@@ -44,7 +47,7 @@ export function useVideoPolling(options: UseVideoPollingOptions = {}) {
   }, []);
 
   const startPolling = useCallback(
-    (videoId: string) => {
+    (videoId: string, type: PollingType = "video") => {
       if (!videoId) return;
 
       if (pollingState.current.has(videoId)) {
@@ -54,14 +57,18 @@ export function useVideoPolling(options: UseVideoPollingOptions = {}) {
       pollingState.current.set(videoId, {
         consecutiveErrors: 0,
         nextDelay: pollInterval,
+        type,
       });
 
       const pollStatus = async () => {
         if (!pollingState.current.has(videoId)) return;
         try {
-          const response = await fetch(`/api/v1/video/${videoId}/status`);
+          const statusEndpoint = type === "image"
+            ? `/api/v1/image/${videoId}/status`
+            : `/api/v1/video/${videoId}/status`;
+          const response = await fetch(statusEndpoint);
           if (!response.ok) {
-            throw new Error("Failed to fetch video status");
+            throw new Error(`Failed to fetch ${type} status`);
           }
 
           const result = await response.json();
@@ -70,13 +77,13 @@ export function useVideoPolling(options: UseVideoPollingOptions = {}) {
 
           if (status === "COMPLETED") {
             try {
-              const video = await fetchVideoDetail(videoId);
+              const item = await fetchDetail(videoId, type);
               stopPolling(videoId);
-              onCompleted?.(video);
+              onCompleted?.(item);
             } catch (detailError) {
-              console.error("Failed to fetch completed video:", detailError);
+              console.error(`Failed to fetch completed ${type}:`, detailError);
               stopPolling(videoId);
-              onFailed?.({ videoId, error: "Failed to fetch video detail" });
+              onFailed?.({ videoId, error: `Failed to fetch ${type} detail` });
             }
           } else if (status === "FAILED") {
             stopPolling(videoId);
@@ -120,7 +127,7 @@ export function useVideoPolling(options: UseVideoPollingOptions = {}) {
       maxBackoffMs,
       onCompleted,
       onFailed,
-      fetchVideoDetail,
+      fetchDetail,
       stopPolling,
     ]
   );
