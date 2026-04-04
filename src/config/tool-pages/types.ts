@@ -19,7 +19,7 @@ export interface PageSEOConfig {
 
 export interface GeneratorConfig {
   // 生成模式
-  mode: "text-to-video" | "image-to-video" | "reference-to-video" | "image-to-image";
+  mode: "text-to-video" | "image-to-video" | "reference-to-video" | "image-to-image" | "text-to-image";
 
   // UI 形态
   uiMode: "full" | "compact";
