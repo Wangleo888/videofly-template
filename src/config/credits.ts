@@ -51,6 +51,18 @@ export interface ModelConfig {
   badge?: string;
 }
 
+export interface ImageModelConfig {
+  id: string;
+  name: string;
+  provider: ProviderType;
+  description: string;
+  creditCost: {
+    perImage: number;
+  };
+  aspectRatios: string[];
+  enabled?: boolean;
+}
+
 // ============================================
 // 用户配置导入
 // ============================================
@@ -62,6 +74,7 @@ import {
   SUBSCRIPTION_PRODUCTS,
   CREDIT_PACKAGES,
   VIDEO_MODEL_PRICING,
+  IMAGE_MODEL_PRICING,
 } from "./pricing-user";
 
 // ============================================
@@ -248,6 +261,33 @@ export const CREDITS_CONFIG = {
       })
       .filter(Boolean) as Array<[string, ModelConfig]>
   ) as Record<string, ModelConfig>,
+
+  // ========== AI 图片模型配置（从 pricing-user.ts 生成）==========
+  imageModels: Object.fromEntries(
+    Object.entries(IMAGE_MODEL_PRICING)
+      .map(([modelId, pricing]) => {
+        const imageBaseConfigs: Record<string, Omit<ImageModelConfig, "creditCost">> = {
+          "wan2.7-image": {
+            id: "wan2.7-image",
+            name: "Wan 2.7",
+            provider: "evolink" as const,
+            description: "models.wan27image.description",
+            aspectRatios: ["1:1", "16:9", "9:16", "4:3", "3:4"],
+          },
+        };
+        const base = imageBaseConfigs[modelId];
+        if (!base) return null;
+        return [
+          modelId,
+          {
+            ...base,
+            creditCost: { perImage: pricing.creditsPerImage },
+            enabled: pricing.enabled,
+          },
+        ];
+      })
+      .filter(Boolean) as Array<[string, ImageModelConfig]>
+  ) as Record<string, ImageModelConfig>,
 };
 
 // ============================================
@@ -409,4 +449,29 @@ export function calculateModelCredits(
 
   // 向上取整
   return Math.ceil(credits);
+}
+
+/** 获取图片模型配置 */
+export function getImageModelConfig(modelId: string): ImageModelConfig | null {
+  return CREDITS_CONFIG.imageModels[modelId] || null;
+}
+
+/** 计算图片模型积分消耗 */
+export function calculateImageCredits(
+  modelId: string,
+  outputNumber: number = 1
+): number {
+  const config = getImageModelConfig(modelId);
+  if (!config) return 0;
+  return Math.ceil(config.creditCost.perImage * outputNumber);
+}
+
+/** 获取所有图片模型 */
+export function getAvailableImageModels(options?: {
+  enabledOnly?: boolean;
+}): ImageModelConfig[] {
+  const { enabledOnly = true } = options || {};
+  return Object.values(CREDITS_CONFIG.imageModels).filter(
+    (m) => !enabledOnly || m.enabled !== false
+  );
 }

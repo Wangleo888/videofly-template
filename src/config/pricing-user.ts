@@ -45,6 +45,12 @@ export interface VideoModelPricing {
   enabled: boolean;
 }
 
+/** 图片模型积分配置 */
+export interface ImageModelPricing {
+  creditsPerImage: number;
+  enabled: boolean;
+}
+
 /** 订阅产品配置 */
 export interface SubscriptionProductConfig {
   id: string;
@@ -300,6 +306,22 @@ export const VIDEO_MODEL_PRICING: Record<string, VideoModelPricing> = {
     perSecond: 5,
     qualityMultiplier: 1.67,
     enabled: false,
+  },
+};
+
+// ============================================
+// 四-B、AI 图片模型积分计费
+// ============================================
+
+/**
+ * 图片生成模型积分配置
+ *
+ * Wan 2.7 Image: 3 积分/张 (性价比高)
+ */
+export const IMAGE_MODEL_PRICING: Record<string, ImageModelPricing> = {
+  "wan2.7-image": {
+    creditsPerImage: 3,
+    enabled: true,
   },
 };
 
