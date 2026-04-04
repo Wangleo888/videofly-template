@@ -3,6 +3,10 @@ import type {
   ImageGenerationParams,
   ImageTaskResponse,
 } from "../types";
+import {
+  getProviderModelId,
+  transformParamsForProvider,
+} from "../model-mapping";
 
 export class EvolinkImageProvider implements AIImageProvider {
   name = "evolink";
@@ -16,16 +20,22 @@ export class EvolinkImageProvider implements AIImageProvider {
   async createImageTask(
     params: ImageGenerationParams
   ): Promise<ImageTaskResponse> {
-    const requestBody: Record<string, unknown> = {
-      prompt: params.prompt,
-      model: params.model || "wan2.7-image",
-      aspect_ratio: params.aspectRatio || "1:1",
-      callback_url: params.callbackUrl,
-    };
+    const modelId = params.model || "wan2.7-image";
 
-    if (params.imageUrl) {
-      requestBody.image_url = params.imageUrl;
-    }
+    const providerModelId = getProviderModelId(modelId, "evolink", {
+      ...params,
+    } as Record<string, unknown>);
+
+    const transformedParams = transformParamsForProvider(modelId, "evolink", {
+      ...params,
+      model: providerModelId,
+    } as Record<string, unknown>);
+
+    const requestBody: Record<string, unknown> = {
+      ...transformedParams,
+      prompt: params.prompt,
+      model: providerModelId,
+    };
 
     if (params.outputNumber) {
       requestBody.n = params.outputNumber;
