@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls d:/Vibecoding/videofly-template/.env*)",
+      "Bash(pnpm dev:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(git commit:*)",
+      "Bash(curl -s http://localhost:3001/text-to-image)",
+      "Bash(curl -sI http://localhost:3001/text-to-image)",
+      "Bash(python -c \"import sys,json; d=json.loads\\(sys.stdin.read\\(\\).split\\('__NEXT_DATA__'\\)[1].split\\('</script>'\\)[0].replace\\(' type=\\\\\"application/json\\\\\">',''\\)\\); print\\(d.get\\('err',{}\\).get\\('message','no message'\\)[:500]\\)\")",
+      "Bash(npx kill-port:*)"
+    ],
+    "additionalDirectories": [
+      "D:\\Vibecoding\\videofly-template\\src\\app\\[locale]\\(tool)"
+    ]
+  }
+}

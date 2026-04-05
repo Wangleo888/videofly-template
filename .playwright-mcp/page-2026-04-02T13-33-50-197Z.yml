@@ -1,0 +1,428 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e6]:
+      - navigation [ref=e8]:
+        - link "VideoFly VideoFly" [ref=e9] [cursor=pointer]:
+          - /url: /
+          - img "VideoFly" [ref=e10]
+          - text: VideoFly
+        - navigation "Main" [ref=e11]:
+          - list [ref=e13]:
+            - listitem [ref=e14]:
+              - button "Tools" [ref=e15] [cursor=pointer]:
+                - text: Tools
+                - img [ref=e16]
+            - listitem [ref=e18]:
+              - link "Pricing" [ref=e19] [cursor=pointer]:
+                - /url: /pricing
+        - generic [ref=e20]:
+          - button "EN" [ref=e21] [cursor=pointer]:
+            - img [ref=e22]
+            - generic [ref=e25]: EN
+          - button "Toggle theme" [ref=e26] [cursor=pointer]:
+            - img [ref=e27]
+          - button "Login" [ref=e33] [cursor=pointer]
+    - main [ref=e34]:
+      - generic [ref=e37]:
+        - generic [ref=e38]:
+          - generic [ref=e40]:
+            - img [ref=e41]
+            - generic [ref=e44]: Powered by Sora 2, Veo 3.1 & more
+          - heading "Transform Your Ideas Into Stunning Videos" [level=1] [ref=e46]
+          - paragraph [ref=e48]: Create professional AI-generated videos in minutes. From text to video, image to video, or enhance existing footage.
+          - generic [ref=e49]:
+            - generic [ref=e50]:
+              - img [ref=e51]
+              - generic [ref=e53]: Lightning Fast
+            - generic [ref=e54]:
+              - img [ref=e55]
+              - generic [ref=e57]: Easy to Use
+            - generic [ref=e58]:
+              - img [ref=e59]
+              - generic [ref=e62]: AI-Powered
+        - generic [ref=e63]:
+          - generic [ref=e65]:
+            - generic [ref=e66]:
+              - generic [ref=e68]:
+                - button [ref=e71] [cursor=pointer]:
+                  - img [ref=e72]
+                - textbox "Enter your idea to generate video" [ref=e74]
+              - generic [ref=e76]:
+                - generic [ref=e77]:
+                  - button "⌘ Text/Image to Video" [ref=e78] [cursor=pointer]:
+                    - generic [ref=e79]: ⌘
+                    - generic [ref=e80]: Text/Image to Video
+                    - img [ref=e81]
+                  - button "Seedance 1.5 Pro Seedance 1.5 Pro" [ref=e83] [cursor=pointer]:
+                    - img "Seedance 1.5 Pro" [ref=e84]
+                    - generic [ref=e85]: Seedance 1.5 Pro
+                    - img [ref=e86]
+                  - button "16:9 | 5s | 720P" [ref=e88] [cursor=pointer]:
+                    - generic [ref=e90]: 16:9
+                    - generic [ref=e91]: "|"
+                    - img [ref=e92]
+                    - generic [ref=e95]: 5s
+                    - generic [ref=e96]: "|"
+                    - generic [ref=e97]: 720P
+                  - button [ref=e98] [cursor=pointer]:
+                    - img [ref=e99]
+                - generic [ref=e103]:
+                  - generic [ref=e104]: 20 Credits
+                  - button [disabled] [ref=e105]:
+                    - img [ref=e106]
+            - generic [ref=e109]:
+              - button [ref=e110] [cursor=pointer]:
+                - img [ref=e111]
+              - button "Cozy Christmas Room" [ref=e116] [cursor=pointer]:
+                - generic [ref=e117]: Cozy Christmas Room
+              - button "workaholic" [ref=e118] [cursor=pointer]:
+                - generic [ref=e119]: workaholic
+              - button "Quiet Resolve" [ref=e120] [cursor=pointer]:
+                - generic [ref=e121]: Quiet Resolve
+              - button "Cinematic Drama" [ref=e122] [cursor=pointer]:
+                - generic [ref=e123]: Cinematic Drama
+              - button "Nature Documentary" [ref=e124] [cursor=pointer]:
+                - generic [ref=e125]: Nature Documentary
+          - paragraph [ref=e126]: 2 free credits to start • No credit card required
+      - generic [ref=e131]:
+        - generic [ref=e133]:
+          - heading "Everything You Need Powerful features to create amazing videos" [level=2] [ref=e134]:
+            - text: Everything You Need
+            - generic [ref=e135]: Powerful features to create amazing videos
+          - paragraph [ref=e136]: Discover the tools and features that make video creation easy and fun
+        - generic [ref=e137]:
+          - generic [ref=e143]:
+            - generic [ref=e144]:
+              - img [ref=e146]
+              - generic [ref=e149]: Popular
+            - generic [ref=e150]:
+              - heading "Text to Video" [level=3] [ref=e151]
+              - paragraph [ref=e152]: Transform your text prompts into stunning videos using advanced AI models
+            - generic [ref=e153]:
+              - generic [ref=e154]: Generation speed
+              - generic [ref=e155]:
+                - generic [ref=e156]: "0"
+                - text: s
+          - generic [ref=e162]:
+            - img [ref=e165]
+            - generic [ref=e169]:
+              - heading "Image to Video" [level=3] [ref=e170]
+              - paragraph [ref=e171]: Animate your images and bring them to life with AI video generation
+            - generic [ref=e172]:
+              - generic [ref=e173]: Max resolution
+              - generic [ref=e174]:
+                - generic [ref=e175]: "0"
+                - text: p
+          - generic [ref=e181]:
+            - img [ref=e184]
+            - generic [ref=e188]:
+              - heading "Reference Generation" [level=3] [ref=e189]
+              - paragraph [ref=e190]: Upload images or videos as references to guide AI generation. Extract camera paths, motion patterns, and styles for precise control
+            - generic [ref=e191]:
+              - generic [ref=e192]: Reference inputs
+              - generic [ref=e193]:
+                - generic [ref=e194]: "0"
+                - text: +
+        - generic [ref=e195]:
+          - generic [ref=e201]:
+            - generic [ref=e202]:
+              - img [ref=e204]
+              - generic [ref=e206]:
+                - generic [ref=e207]: "0"
+                - text: min
+            - heading "Lightning Fast" [level=4] [ref=e208]
+            - paragraph [ref=e209]: Generate professional videos in just 2-5 minutes
+          - generic [ref=e215]:
+            - generic [ref=e216]:
+              - img [ref=e218]
+              - generic [ref=e220]:
+                - generic [ref=e221]: "0"
+                - text: "%"
+            - heading "Secure & Private" [level=4] [ref=e222]
+            - paragraph [ref=e223]: Your data is encrypted and videos are stored securely
+          - generic [ref=e229]:
+            - generic [ref=e230]:
+              - img [ref=e232]
+              - generic [ref=e235]:
+                - generic [ref=e236]: "0"
+                - text: /7
+            - heading "Real-time Updates" [level=4] [ref=e237]
+            - paragraph [ref=e238]: Track your video generation progress in real-time
+        - link "Start Creating Now" [ref=e241] [cursor=pointer]:
+          - /url: /#generator
+          - button "Start Creating Now" [ref=e242]: Start Creating Now
+      - generic [ref=e252]:
+        - generic [ref=e254]:
+          - generic [ref=e255]:
+            - img [ref=e256]
+            - generic [ref=e259]: Simple Process
+          - heading "How It Works Create your video in 4 simple steps" [level=2] [ref=e260]:
+            - text: How It Works
+            - generic [ref=e261]: Create your video in 4 simple steps
+          - paragraph [ref=e262]: Get started in minutes with our intuitive video creation workflow
+        - generic [ref=e263]:
+          - generic [ref=e269]:
+            - generic [ref=e270]:
+              - generic [ref=e271]: "01"
+              - img [ref=e273]
+            - heading "Describe Your Video" [level=3] [ref=e275]
+            - paragraph [ref=e276]: Enter a detailed text prompt describing the video you want to create
+            - generic [ref=e277]:
+              - generic [ref=e278]: Average time
+              - generic [ref=e279]:
+                - generic [ref=e280]: "0"
+                - text: s
+          - generic [ref=e286]:
+            - generic [ref=e287]:
+              - generic [ref=e288]: "02"
+              - img [ref=e290]
+            - heading "Upload Reference" [level=3] [ref=e293]
+            - paragraph [ref=e294]: Optionally add a reference image to guide the AI (optional)
+            - generic [ref=e295]:
+              - generic [ref=e296]: Formats supported
+              - generic [ref=e297]:
+                - generic [ref=e298]: "0"
+                - text: +
+          - generic [ref=e304]:
+            - generic [ref=e305]:
+              - generic [ref=e306]: "03"
+              - img [ref=e308]
+            - heading "AI Generates" [level=3] [ref=e311]
+            - paragraph [ref=e312]: Our AI processes your request and creates a unique video
+            - generic [ref=e313]:
+              - generic [ref=e314]: Generation time
+              - generic [ref=e315]:
+                - generic [ref=e316]: "0"
+                - text: min
+          - generic [ref=e322]:
+            - generic [ref=e323]:
+              - generic [ref=e324]: "04"
+              - img [ref=e326]
+            - heading "Download & Share" [level=3] [ref=e329]
+            - paragraph [ref=e330]: Get your HD video and share it anywhere you want
+            - generic [ref=e331]:
+              - generic [ref=e332]: Max quality
+              - generic [ref=e333]:
+                - generic [ref=e334]: "0"
+                - text: p
+        - link "Start Creating Now" [ref=e337] [cursor=pointer]:
+          - /url: /#generator
+          - button "Start Creating Now" [ref=e338]:
+            - text: Start Creating Now
+            - img [ref=e342]
+      - generic [ref=e347]:
+        - generic [ref=e348]:
+          - heading "Pricing" [level=2] [ref=e349]
+          - paragraph [ref=e350]: Simple, transparent pricing
+        - generic [ref=e351]:
+          - generic [ref=e353]:
+            - button "One-time" [ref=e354] [cursor=pointer]
+            - button "Monthly" [ref=e355] [cursor=pointer]
+            - button "Yearly20% OFF" [ref=e356] [cursor=pointer]
+          - generic [ref=e357]:
+            - generic [ref=e358]:
+              - generic [ref=e359]:
+                - paragraph [ref=e360]: Basic Plan
+                - generic [ref=e362]:
+                  - generic [ref=e363]: $9.90
+                  - generic [ref=e364]: /month
+                - generic [ref=e365]: "Credits: 280"
+                - generic [ref=e366]: Perfect for beginners
+              - generic [ref=e367]:
+                - list [ref=e368]:
+                  - listitem [ref=e369]:
+                    - img [ref=e370]
+                    - paragraph [ref=e372]: HD video generation
+                  - listitem [ref=e373]:
+                    - img [ref=e374]
+                    - paragraph [ref=e376]: Fast generation speed
+                  - listitem [ref=e377]:
+                    - img [ref=e378]
+                    - paragraph [ref=e381]: No watermark
+                  - listitem [ref=e382]:
+                    - img [ref=e383]
+                    - paragraph [ref=e386]: Commercial use license
+                  - listitem [ref=e387]:
+                    - img [ref=e388]
+                    - paragraph [ref=e391]: Priority support
+                  - listitem [ref=e392]:
+                    - img [ref=e393]
+                    - paragraph [ref=e396]: API access
+                - button "Sign Up" [ref=e397] [cursor=pointer]
+            - generic [ref=e398]:
+              - generic [ref=e400]:
+                - paragraph [ref=e401]: Pro Plan
+                - generic [ref=e403]:
+                  - generic [ref=e404]: $29.90
+                  - generic [ref=e405]: /month
+                - generic [ref=e406]: "Credits: 960"
+                - generic [ref=e407]: Best for professionals
+              - generic [ref=e408]:
+                - list [ref=e409]:
+                  - listitem [ref=e410]:
+                    - img [ref=e411]
+                    - paragraph [ref=e413]: HD video generation
+                  - listitem [ref=e414]:
+                    - img [ref=e415]
+                    - paragraph [ref=e417]: Fast generation speed
+                  - listitem [ref=e418]:
+                    - img [ref=e419]
+                    - paragraph [ref=e421]: No watermark
+                  - listitem [ref=e422]:
+                    - img [ref=e423]
+                    - paragraph [ref=e425]: Commercial use license
+                  - listitem [ref=e426]:
+                    - img [ref=e427]
+                    - paragraph [ref=e430]: Priority support
+                  - listitem [ref=e431]:
+                    - img [ref=e432]
+                    - paragraph [ref=e435]: API access
+                - button "Sign Up" [ref=e436] [cursor=pointer]
+            - generic [ref=e437]:
+              - generic [ref=e438]:
+                - paragraph [ref=e439]: Team Plan
+                - generic [ref=e441]:
+                  - generic [ref=e442]: $79.90
+                  - generic [ref=e443]: /month
+                - generic [ref=e444]: "Credits: 2,850"
+                - generic [ref=e445]: For teams and businesses
+              - generic [ref=e446]:
+                - list [ref=e447]:
+                  - listitem [ref=e448]:
+                    - img [ref=e449]
+                    - paragraph [ref=e451]: HD video generation
+                  - listitem [ref=e452]:
+                    - img [ref=e453]
+                    - paragraph [ref=e455]: Fast generation speed
+                  - listitem [ref=e456]:
+                    - img [ref=e457]
+                    - paragraph [ref=e459]: No watermark
+                  - listitem [ref=e460]:
+                    - img [ref=e461]
+                    - paragraph [ref=e463]: Commercial use license
+                  - listitem [ref=e464]:
+                    - img [ref=e465]
+                    - paragraph [ref=e467]: Priority support
+                  - listitem [ref=e468]:
+                    - img [ref=e469]
+                    - paragraph [ref=e471]: API access
+                - button "Sign Up" [ref=e472] [cursor=pointer]
+      - generic [ref=e482]:
+        - generic [ref=e483]:
+          - generic [ref=e484]:
+            - img [ref=e485]
+            - generic [ref=e488]: Limited Time Offer
+          - heading "Ready to Create Amazing Videos? Join thousands of creators already using VideoFly" [level=2] [ref=e489]:
+            - text: Ready to Create Amazing Videos?
+            - generic [ref=e490]: Join thousands of creators already using VideoFly
+          - paragraph [ref=e491]: Start creating professional videos today with our free trial
+          - list [ref=e492]:
+            - listitem [ref=e493]:
+              - img [ref=e494]
+              - generic [ref=e496]: 2 free credits to start
+            - listitem [ref=e497]:
+              - img [ref=e498]
+              - generic [ref=e500]: No credit card required
+            - listitem [ref=e501]:
+              - img [ref=e502]
+              - generic [ref=e504]: Cancel anytime
+            - listitem [ref=e505]:
+              - img [ref=e506]
+              - generic [ref=e508]: 24/7 customer support
+          - link "Get Started Free" [ref=e510] [cursor=pointer]:
+            - /url: /#generator
+            - button "Get Started Free" [ref=e511]:
+              - text: Get Started Free
+              - img [ref=e515]
+        - generic [ref=e522]:
+          - img "AI Video Generation Preview" [ref=e524]
+          - generic [ref=e525]:
+            - generic [ref=e526]:
+              - generic [ref=e527]: Generating...
+              - generic [ref=e528]: 100%
+            - paragraph [ref=e531]: Ready in 2-5 minutes
+      - generic [ref=e534]:
+        - generic [ref=e536]:
+          - heading "Frequently Asked Questions" [level=2] [ref=e537]
+          - paragraph [ref=e538]: Everything you need to know about VideoFly
+        - generic [ref=e541]:
+          - heading "1 What is VideoFly?" [level=3] [ref=e544]:
+            - button "1 What is VideoFly?" [ref=e545] [cursor=pointer]:
+              - generic [ref=e546]:
+                - generic [ref=e547]: "1"
+                - generic [ref=e548]: What is VideoFly?
+              - img [ref=e549]
+          - heading "2 Can I use the videos for commercial purposes?" [level=3] [ref=e553]:
+            - button "2 Can I use the videos for commercial purposes?" [ref=e554] [cursor=pointer]:
+              - generic [ref=e555]:
+                - generic [ref=e556]: "2"
+                - generic [ref=e557]: Can I use the videos for commercial purposes?
+              - img [ref=e558]
+          - heading "3 Which AI models do you use?" [level=3] [ref=e562]:
+            - button "3 Which AI models do you use?" [ref=e563] [cursor=pointer]:
+              - generic [ref=e564]:
+                - generic [ref=e565]: "3"
+                - generic [ref=e566]: Which AI models do you use?
+              - img [ref=e567]
+          - heading "4 How does the credit system work?" [level=3] [ref=e571]:
+            - button "4 How does the credit system work?" [ref=e572] [cursor=pointer]:
+              - generic [ref=e573]:
+                - generic [ref=e574]: "4"
+                - generic [ref=e575]: How does the credit system work?
+              - img [ref=e576]
+          - heading "5 Do you offer refunds?" [level=3] [ref=e580]:
+            - button "5 Do you offer refunds?" [ref=e581] [cursor=pointer]:
+              - generic [ref=e582]:
+                - generic [ref=e583]: "5"
+                - generic [ref=e584]: Do you offer refunds?
+              - img [ref=e585]
+          - heading "6 How can I get support?" [level=3] [ref=e589]:
+            - button "6 How can I get support?" [ref=e590] [cursor=pointer]:
+              - generic [ref=e591]:
+                - generic [ref=e592]: "6"
+                - generic [ref=e593]: How can I get support?
+              - img [ref=e594]
+        - paragraph [ref=e598]:
+          - text: Still have questions? Contact us at
+          - link "support@videofly.app" [ref=e599] [cursor=pointer]:
+            - /url: mailto:support@videofly.app
+    - contentinfo [ref=e600]:
+      - generic [ref=e601]:
+        - generic [ref=e602]:
+          - generic [ref=e603]:
+            - link "🎬 VideoFly" [ref=e604] [cursor=pointer]:
+              - /url: /
+            - paragraph [ref=e605]: Transform your ideas into stunning videos with AI.
+          - generic [ref=e606]:
+            - heading "Product" [level=3] [ref=e607]
+            - list [ref=e608]:
+              - listitem [ref=e609]:
+                - link "Image to Video" [ref=e610] [cursor=pointer]:
+                  - /url: /image-to-video
+              - listitem [ref=e611]:
+                - link "Text to Video" [ref=e612] [cursor=pointer]:
+                  - /url: /text-to-video
+              - listitem [ref=e613]:
+                - link "Reference to Video" [ref=e614] [cursor=pointer]:
+                  - /url: /reference-to-video
+              - listitem [ref=e615]:
+                - link "Pricing" [ref=e616] [cursor=pointer]:
+                  - /url: /pricing
+          - generic [ref=e617]:
+            - heading "Legal" [level=3] [ref=e618]
+            - list [ref=e619]:
+              - listitem [ref=e620]:
+                - link "Privacy Policy" [ref=e621] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e622]:
+                - link "Terms of Service" [ref=e623] [cursor=pointer]:
+                  - /url: /terms
+        - generic [ref=e624]:
+          - paragraph [ref=e625]: © 2026 VideoFly. All rights reserved.
+          - paragraph [ref=e626]:
+            - text: Made with
+            - img [ref=e627]
+            - text: by VideoFly Team
+  - region "Notifications alt+T"
+  - generic [ref=e630]: 2xl
+  - alert [ref=e631]
