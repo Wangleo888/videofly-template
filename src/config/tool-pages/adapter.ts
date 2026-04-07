@@ -9,7 +9,7 @@
 import type { VideoModel, ImageModel, GeneratorMode } from "@/components/video-generator/types";
 import type { VideoGeneratorCoreConfig } from "@/components/video-generator/video-generator-core";
 import type { ToolPageConfig } from "@/config/tool-pages/types";
-import { CREDITS_CONFIG, getAvailableModels } from "@/config/credits";
+import { CREDITS_CONFIG, getAvailableModels, getAvailableImageModels } from "@/config/credits";
 
 // ============================================================================
 // 类型转换函数
@@ -30,6 +30,20 @@ function convertToVideoModel(modelConfig: any): VideoModel {
     aspectRatios: modelConfig.aspectRatios,
     resolutions: modelConfig.qualities,
     supportsAudio: false,
+  };
+}
+
+/**
+ * 将 credits.ts 的 ImageModelConfig 转换为 ImageModel
+ */
+function convertToImageModel(modelConfig: any): ImageModel {
+  return {
+    id: modelConfig.id,
+    name: modelConfig.name,
+    description: modelConfig.description,
+    creditCost: modelConfig.creditCost.perImage,
+    creditDisplay: `${modelConfig.creditCost.perImage}+`,
+    color: getModelColor(modelConfig.id),
   };
 }
 
@@ -63,34 +77,46 @@ export function adaptToolPageConfigToGeneratorConfig(
 ): VideoGeneratorCoreConfig {
   const { generator, landing } = toolPageConfig;
 
+  const isImageGeneration = generator.mode === "text-to-image" || generator.mode === "image-to-image";
+
   // 从 credits.ts 获取所有模型
-  const allModels = getAvailableModels();
-  const videoModels: VideoModel[] = allModels.map(convertToVideoModel);
+  const allVideoModels = getAvailableModels();
+  const videoModels: VideoModel[] = allVideoModels.map(convertToVideoModel);
+
+  const allImageModels = getAvailableImageModels();
+  const imageModels: ImageModel[] = allImageModels.map(convertToImageModel);
 
   // 根据 generator.models.available 过滤模型
   const availableVideoModels = generator.models.available
     ? videoModels.filter((m) => generator.models.available!.includes(m.id))
     : videoModels;
 
+  const availableImageModels = generator.models.available
+    ? imageModels.filter((m) => generator.models.available!.includes(m.id))
+    : imageModels;
+
   // 创建默认模式
-  const videoModes: GeneratorMode[] = [
-    {
-      id: generator.mode,
-      name: getTitleFromMode(generator.mode),
-      icon: getIconFromMode(generator.mode),
-      uploadType: generator.mode === "image-to-video" ? "single" : undefined,
-      supportedModels: generator.models.available,
-    },
-  ];
+  const modeObj: GeneratorMode = {
+    id: generator.mode,
+    name: getTitleFromMode(generator.mode),
+    icon: getIconFromMode(generator.mode),
+    uploadType: (generator.mode === "image-to-video" || generator.mode === "image-to-image") ? "single" : undefined,
+    supportedModels: generator.models.available,
+  };
+
+  const videoModes: GeneratorMode[] = isImageGeneration ? [] : [modeObj];
+  const imageModes: GeneratorMode[] = isImageGeneration ? [modeObj] : [];
 
   // 转换时长、宽高比等配置
   const durations = generator.settings.durations?.map((d) => `${d}s`) ||
     availableVideoModels[0]?.durations ||
     ["5s", "10s", "15s"];
 
-  const aspectRatios = generator.settings.aspectRatios ||
-    availableVideoModels[0]?.aspectRatios ||
-    ["16:9", "9:16", "1:1"];
+  const defaultAspectRatios = isImageGeneration
+    ? (allImageModels.find(m => m.id === (generator.models.default || availableImageModels[0]?.id))?.aspectRatios || ["1:1", "16:9"])
+    : (allVideoModels.find(m => m.id === (generator.models.default || availableVideoModels[0]?.id))?.aspectRatios || ["16:9", "9:16", "1:1"]);
+
+  const aspectRatios = generator.settings.aspectRatios || defaultAspectRatios;
 
   const resolutions = generator.settings.qualities ?? [];
 
@@ -105,9 +131,9 @@ export function adaptToolPageConfigToGeneratorConfig(
 
   return {
     videoModels: availableVideoModels,
-    imageModels: [],
+    imageModels: availableImageModels,
     videoModes,
-    imageModes: [],
+    imageModes,
     imageStyles: [],
     promptTemplates: landing.examples.map((ex, i) => ({
       id: `${i}`,
@@ -115,8 +141,8 @@ export function adaptToolPageConfigToGeneratorConfig(
       image: ex.thumbnail,
     })),
     aspectRatios: {
-      video: aspectRatios,
-      image: ["1:1", "16:9"],
+      video: isImageGeneration ? [] : aspectRatios,
+      image: isImageGeneration ? aspectRatios : ["1:1", "16:9"],
     },
     durations,
     resolutions,
@@ -125,13 +151,17 @@ export function adaptToolPageConfigToGeneratorConfig(
       image: outputNumbers,
     },
     defaults: {
-      generationType: "video",
-      videoModel: generator.models.default || generator.models.available?.[0],
-      videoMode: generator.mode,
+      generationType: isImageGeneration ? "image" : "video",
+      videoModel: isImageGeneration ? undefined : (generator.models.default || generator.models.available?.[0] || availableVideoModels[0]?.id),
+      imageModel: isImageGeneration ? (generator.models.default || generator.models.available?.[0] || availableImageModels[0]?.id) : undefined,
+      videoMode: isImageGeneration ? undefined : generator.mode,
+      imageMode: isImageGeneration ? generator.mode : undefined,
       duration: generator.defaults.duration ? `${generator.defaults.duration}s` : durations[0],
-      videoAspectRatio: generator.defaults.aspectRatio,
+      videoAspectRatio: isImageGeneration ? undefined : (generator.defaults.aspectRatio || aspectRatios[0]),
+      imageAspectRatio: isImageGeneration ? (generator.defaults.aspectRatio || aspectRatios[0]) : undefined,
       resolution: resolutions[0],
-      videoOutputNumber: generator.defaults.outputNumber,
+      videoOutputNumber: isImageGeneration ? undefined : generator.defaults.outputNumber,
+      imageOutputNumber: isImageGeneration ? generator.defaults.outputNumber : undefined,
     },
   };
 }
@@ -145,6 +175,7 @@ function getTitleFromMode(mode: string): string {
     "image-to-video": "Image to Video",
     "reference-to-video": "Reference to Video",
     "image-to-image": "Image to Image",
+    "text-to-image": "Text to Image",
   };
   return titles[mode] || mode;
 }
@@ -158,6 +189,7 @@ function getIconFromMode(mode: string): "text" | "image" | "reference" | "frames
     "image-to-video": "image",
     "reference-to-video": "reference",
     "image-to-image": "image",
+    "text-to-image": "text",
   };
   return icons[mode] || "text";
 }

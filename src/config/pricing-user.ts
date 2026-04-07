@@ -305,7 +305,7 @@ export const VIDEO_MODEL_PRICING: Record<string, VideoModelPricing> = {
     baseCredits: 25,
     perSecond: 5,
     qualityMultiplier: 1.67,
-    enabled: false,
+    enabled: true,
   },
 };
 

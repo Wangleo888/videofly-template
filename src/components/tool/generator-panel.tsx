@@ -14,7 +14,7 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { cn } from "@/components/ui";
 import { DEFAULT_VIDEO_MODELS } from "@/components/video-generator";
-import { getAvailableModels, calculateModelCredits } from "@/config/credits";
+import { getAvailableModels, getAvailableImageModels, calculateModelCredits, calculateImageCredits } from "@/config/credits";
 import { ChevronDown, X, Sparkles, Image as ImageIcon, Clock, Check } from "lucide-react";
 import {
   DropdownMenu,
@@ -85,7 +85,10 @@ export function GeneratorPanel({
   initialQuality,
   initialImageUrl,
 }: GeneratorPanelProps) {
-  const models = getAvailableModels();
+  const isImageTool = toolType === "text-to-image";
+  const videoModels = useMemo(() => getAvailableModels(), []);
+  const imageModelList = useMemo(() => getAvailableImageModels(), []);
+  const models = isImageTool ? imageModelList : videoModels;
   const [prompt, setPrompt] = useState(initialPrompt || "");
   const [selectedModel, setSelectedModel] = useState(initialModelId || defaultModelId || models[0]?.id || "");
   const [duration, setDuration] = useState(initialDuration || 10);
@@ -101,11 +104,11 @@ export function GeneratorPanel({
     let filtered = allowList
       ? models.filter((m) => availableModelIds!.includes(m.id))
       : models;
-    if (toolType === "image-to-video" || toolType === "reference-to-video") {
-      filtered = filtered.filter((m) => m.supportImageToVideo);
+    if (!isImageTool && (toolType === "image-to-video" || toolType === "reference-to-video")) {
+      filtered = filtered.filter((m) => "supportImageToVideo" in m && m.supportImageToVideo);
     }
     return filtered;
-  }, [toolType, models, availableModelIds]);
+  }, [toolType, isImageTool, models, availableModelIds]);
 
   const currentModel = useMemo(
     () => availableModels.find((m) => m.id === selectedModel) || availableModels[0],
@@ -155,7 +158,7 @@ export function GeneratorPanel({
   useEffect(() => {
     if (!currentModel) return;
 
-    if (currentModel.durations && !currentModel.durations.includes(duration)) {
+    if ("durations" in currentModel && currentModel.durations && !currentModel.durations.includes(duration)) {
       setDuration(currentModel.durations[0] || duration);
     }
 
@@ -163,7 +166,7 @@ export function GeneratorPanel({
       setAspectRatio(currentModel.aspectRatios[0] || aspectRatio);
     }
 
-    if (currentModel.qualities) {
+    if ("qualities" in currentModel && currentModel.qualities) {
       if (!currentModel.qualities.includes(quality)) {
         setQuality(currentModel.qualities[0] || quality);
       }
@@ -194,24 +197,27 @@ export function GeneratorPanel({
 
   useEffect(() => {
     if (!currentModel) return;
-    if (initialDuration && currentModel.durations?.includes(initialDuration)) {
+    if (initialDuration && "durations" in currentModel && currentModel.durations?.includes(initialDuration)) {
       setDuration(initialDuration);
     }
     if (initialAspectRatio && currentModel.aspectRatios?.includes(initialAspectRatio)) {
       setAspectRatio(initialAspectRatio);
     }
-    if (initialQuality && currentModel.qualities?.includes(initialQuality)) {
+    if (initialQuality && "qualities" in currentModel && currentModel.qualities?.includes(initialQuality)) {
       setQuality(initialQuality);
     }
   }, [currentModel, initialDuration, initialAspectRatio, initialQuality]);
 
   const estimatedCredits = useMemo(() => {
     if (!selectedModel) return 0;
+    if (isImageTool) {
+      return calculateImageCredits(selectedModel, 1);
+    }
     return calculateModelCredits(selectedModel, {
       duration,
-      quality: currentModel?.qualities?.includes(quality) ? quality : undefined,
+      quality: currentModel && "qualities" in currentModel && currentModel.qualities?.includes(quality) ? quality : undefined,
     });
-  }, [selectedModel, duration, quality, currentModel]);
+  }, [isImageTool, selectedModel, duration, quality, currentModel]);
 
   const handleSubmit = useCallback(() => {
     if (!currentModel) return;
@@ -225,9 +231,9 @@ export function GeneratorPanel({
       toolType,
       model: selectedModel,
       prompt: prompt.trim(),
-      duration,
+      duration: isImageTool ? 0 : duration,
       aspectRatio,
-      quality: currentModel?.qualities?.includes(quality) ? quality : undefined,
+      quality: !isImageTool && "qualities" in (currentModel as any) && (currentModel as any).qualities?.includes(quality) ? quality : undefined,
       outputNumber: 1,
       imageFile: imageFile || undefined,
       imageUrl: imageUrl || undefined,
@@ -320,10 +326,14 @@ export function GeneratorPanel({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="bg-zinc-900 border-zinc-800 w-80 max-h-[400px] overflow-y-scroll custom-scrollbar">
                   <DropdownMenuLabel className="text-zinc-400 text-xs">
-                    Video Models
+                    {isImageTool ? "Image Models" : "Video Models"}
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-zinc-800" />
-                  {availableModels.map((model) => (
+                  {availableModels.map((model) => {
+                    const creditDisplay = isImageTool
+                      ? `${(model as any).creditCost?.perImage ?? ""} credits`
+                      : `${(model as any).creditCost?.base ?? ""} credits`;
+                    return (
                     <DropdownMenuItem
                       key={model.id}
                       data-model-id={model.id}
@@ -343,19 +353,20 @@ export function GeneratorPanel({
                         <div className="text-xs text-zinc-500 mt-1 ml-8">{model.description}</div>
                       )}
                       <div className="text-xs text-zinc-400 mt-1 ml-8 flex items-center gap-2">
-                        {model.maxDuration && (
+                        {"maxDuration" in model && (model as any).maxDuration && (
                           <>
                             <span className="flex items-center gap-1">
                               <Clock className="w-3 h-3" />
-                              {model.maxDuration}
+                              {(model as any).maxDuration}
                             </span>
                             <span>•</span>
                           </>
                         )}
-                        <span>{model.creditCost?.base ?? ""} credits</span>
+                        <span>{creditDisplay}</span>
                       </div>
                     </DropdownMenuItem>
-                  ))}
+                    );
+                  })}
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
@@ -379,7 +390,7 @@ export function GeneratorPanel({
 
           {/* Image Upload (for image-to-video) */}
           {(toolType === "image-to-video" || toolType === "reference-to-video") &&
-            currentModel?.supportImageToVideo && (
+            currentModel && "supportImageToVideo" in currentModel && currentModel.supportImageToVideo && (
               <div>
                 <SectionLabel required={toolType === "image-to-video"}>
                   {toolType === "reference-to-video" ? "REFERENCE IMAGE" : "IMAGE SOURCE"}
@@ -467,11 +478,11 @@ export function GeneratorPanel({
 
             {/* Duration & Quality */}
             <div className="grid grid-cols-2 gap-4">
-              {currentModel?.durations && (
+              {currentModel && "durations" in currentModel && currentModel.durations && (
                 <div>
                   <SectionLabel>VIDEO LENGTH</SectionLabel>
                   <div className="grid grid-cols-3 gap-2">
-                    {currentModel.durations.map((d) => (
+                    {currentModel.durations.map((d: number) => (
                       <button
                         key={d}
                         type="button"
@@ -491,11 +502,11 @@ export function GeneratorPanel({
                 </div>
               )}
 
-              {currentModel?.qualities && (
+              {currentModel && "qualities" in currentModel && currentModel.qualities && (
                 <div>
                   <SectionLabel>RESOLUTION</SectionLabel>
                   <div className="grid grid-cols-3 gap-2">
-                    {currentModel.qualities.map((q) => (
+                    {currentModel.qualities.map((q: string) => (
                       <button
                         key={q}
                         type="button"
